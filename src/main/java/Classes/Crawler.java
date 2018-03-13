@@ -17,7 +17,7 @@ public class Crawler extends Thread {
 
     public Crawler(){
         super();
-        this.db = DBConnection.getInstance();
+        //this.db = DBConnection.getInstance();
     }
 
 
@@ -66,7 +66,7 @@ public class Crawler extends Thread {
 
         for (Element link : els) {
             String url = link.attr("abs:href");
-            this.db.insertIntoCollection(new Document().append("url", url), "unprocessedSeedList");
+            // this.db.insertIntoCollection(new Document().append("url", url), "unprocessedSeedList");
             System.out.println(url);
         }
     }
@@ -76,9 +76,9 @@ public class Crawler extends Thread {
         this.crawl();
     }
 
-    public void crawl(){
-        try{
-            String url = this.getLatestSeed();
+    public void crawl() {
+        try {
+            String url = "https://www.google.com";//this.getLatestSeed();
 
             String res = this.sentGETRequest(url);
 
@@ -87,7 +87,7 @@ public class Crawler extends Thread {
             this.parseDocument(res);
 
 
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
