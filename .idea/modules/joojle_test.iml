@@ -10,11 +10,15 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="joojle_main" />
-    <orderEntry type="library" name="Gradle: org.mongodb:mongodb-driver:3.4.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.mongodb:mongodb-driver:3.6.3" level="project" />
     <orderEntry type="library" name="Gradle: org.jsoup:jsoup:1.11.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.crawler-commons:crawler-commons:0.9" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
-    <orderEntry type="library" name="Gradle: org.mongodb:mongodb-driver-core:3.4.3" level="project" />
-    <orderEntry type="library" name="Gradle: org.mongodb:bson:3.4.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.mongodb:mongodb-driver-core:3.6.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.mongodb:bson:3.6.3" level="project" />
+    <orderEntry type="library" name="Gradle: commons-io:commons-io:2.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.tika:tika-core:1.16" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.7" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="joojle_main" />
