@@ -104,8 +104,23 @@ public class Crawler extends Thread {
         Elements links = doc.body().select("a[href]"); // get all links that points to other pages, not buttons
 
         Element title = doc.head().selectFirst("title");
+        if(title == null)
+            title = doc.head().selectFirst("meta[name='og:title']");
+
+
         Element description = doc.head().selectFirst("meta[name='description']");
+        if(description == null)
+                description = doc.head().selectFirst("meta[name='og:description']");
+        if(description == null)
+            description = doc.head().selectFirst("meta[name='twitter:description']");
+
+
         Element keywordsSeparated = doc.head().selectFirst("meta[name='keywords']");
+        if(keywordsSeparated == null)
+            keywordsSeparated = doc.head().selectFirst("meta[name='og:keywords']");
+        if(keywordsSeparated == null)
+            keywordsSeparated = doc.head().selectFirst("meta[name='twitter:keywords']");
+
 
         String bodyContent = doc.body().toString();
 
@@ -135,9 +150,9 @@ public class Crawler extends Thread {
                         .append("outLinks", links.size())
                         .append("body", bodyContent)
                         .append("inLinks", 0)
-                        .append("description", description.attr("content"))
-                        .append("title", title.attr("content"))
-                        .append("keywords", Arrays.asList(keywordsSeparated.attr("content").split("\\s*,\\s*")))
+                        .append("description", description != null ? description.attr("content") : "")
+                        .append("title", title != null ? title.text() : "")
+                        .append("keywords", keywordsSeparated != null ? Arrays.asList(keywordsSeparated.attr("content").split("\\s*,\\s*")) : "")
 
                 , DBConnection.INDEXED_URLs
         );
@@ -160,6 +175,10 @@ public class Crawler extends Thread {
 
             if (isAllowed) {
                 String res = this.sentGETRequest(url);
+
+                if( res == null || res.isEmpty() )
+                    throw new Exception("Empty page Document at url " + url);
+
 
                 this.parseDocument(res, url);
 

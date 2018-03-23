@@ -3,7 +3,7 @@ package Classes;
 public class CrawlerMain {
     public static void main(String args[]){
 
-        /*int threadsLimit;
+        int threadsLimit;
 
         if(args.length == 0) {
 
@@ -16,9 +16,9 @@ public class CrawlerMain {
 
         for(int i=0;i<threadsLimit;i++){
             (new Crawler()).start();
-        }*/
+        }
 
-        new Crawler().run();
+        //new Crawler().run();
     }
 }
 
