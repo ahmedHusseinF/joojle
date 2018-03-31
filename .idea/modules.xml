@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/joojle.iml" filepath="$PROJECT_DIR$/.idea/modules/joojle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/joojle.iml" filepath="$PROJECT_DIR$/joojle.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/joojle_main.iml" filepath="$PROJECT_DIR$/.idea/modules/joojle_main.iml" group="joojle" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/joojle_test.iml" filepath="$PROJECT_DIR$/.idea/modules/joojle_test.iml" group="joojle" />
     </modules>
