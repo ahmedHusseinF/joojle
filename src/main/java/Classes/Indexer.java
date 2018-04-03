@@ -180,11 +180,11 @@ public class Indexer extends Thread {
 
             Document ourWordDocument = new Document().append("word", wordDocument.getKey());
 
-            if (DBconn.isThisObjectExist(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs)) {
+            if (DBconn.isThisObjectExist(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs)) {
 
                 // update the index
                 ArrayList<Document> foundWords =
-                        DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs);
+                        DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
                 if (foundWords.size() > 1)
                     foundWords.size(); // getting away with it
@@ -201,7 +201,7 @@ public class Indexer extends Thread {
 
 
                 // update words as they are seen in the loop
-                DBconn.updateDocumentInCollection(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs);
+                DBconn.updateDocumentInCollection(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
 
             } else {
@@ -219,7 +219,7 @@ public class Indexer extends Thread {
 
 
         if (toBeInserted.size() != 0)
-            DBconn.insertManyIntoCollection(toBeInserted, DBConnection.INDEXED_URLs);
+            DBconn.insertManyIntoCollection(toBeInserted, DBConnection.INDEXED_WORDs);
 
     }
 

@@ -21,7 +21,7 @@ class DBConnection {
     private static final String DB_NAME = "joojle";
     static final String SEED_LIST = "SeedList";
     static final String FETCHED_URLs = "FetchedURLs";
-    static final String INDEXED_URLs = "IndexedURLs";
+    static final String INDEXED_WORDs = "IndexedWords";
 
 
     private DBConnection() {

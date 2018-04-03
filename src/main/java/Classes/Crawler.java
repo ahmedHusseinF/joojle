@@ -154,7 +154,7 @@ public class Crawler extends Thread {
             if(DBConn.isThisObjectExist(new Document().append("url", eachUrl), DBConnection.SEED_LIST))
                 continue;
 
-            if(DBConn.isThisObjectExist(new Document().append("url", eachUrl), DBConnection.INDEXED_URLs))
+            if(DBConn.isThisObjectExist(new Document().append("url", eachUrl), DBConnection.INDEXED_WORDs))
                 continue;
 
             if(new URL(eachUrl).getProtocol().equals("mailto"))
