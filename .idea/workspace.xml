@@ -2,14 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d8fd6a8-6558-42c2-af42-decbabd9e3c8" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/Classes/Crawler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Classes/Crawler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/Classes/DBConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Classes/DBConnection.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/Crawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/Crawler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/CrawlerMain.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/DBConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/DBConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Classes/Indexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/Indexer.java" afterDir="false" />
     </list>
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,8 +15,8 @@
       <file leaf-file-name="Indexer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Indexer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="114" column="14" selection-start-line="114" selection-start-column="14" selection-end-line="114" selection-end-column="14" />
+            <state relative-caret-position="281">
+              <caret line="189" column="62" selection-start-line="189" selection-start-column="62" selection-end-line="189" selection-end-column="62" />
             </state>
           </provider>
         </entry>
@@ -266,12 +258,12 @@
       <option name="presentableId" value="Default" />
       <updated>1520363924404</updated>
       <workItem from="1522670079243" duration="62000" />
-      <workItem from="1522682339499" duration="23862000" />
+      <workItem from="1522682339499" duration="24590000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23187000" />
+    <option name="totallyTimeSpent" value="23915000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="1366" height="743" extended-state="6" />
@@ -283,9 +275,9 @@
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50292826" side_tool="true" weight="0.32913387" />
       <window_info anchor="right" id="Maven Projects" order="5" />
       <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.43443918" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.43443918" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.328594" />
       <window_info id="Designer" order="2" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.20644216" />
       <window_info anchor="bottom" id="Build" order="10" weight="0.51026857" />
@@ -670,8 +662,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Indexer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="114" column="14" selection-start-line="114" selection-start-column="14" selection-end-line="114" selection-end-column="14" />
+        <state relative-caret-position="281">
+          <caret line="189" column="62" selection-start-line="189" selection-start-column="62" selection-end-line="189" selection-end-column="62" />
         </state>
       </provider>
     </entry>

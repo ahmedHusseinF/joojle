@@ -187,7 +187,7 @@ public class Indexer extends Thread {
                         DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs);
 
                 if (foundWords.size() > 1)
-                    foundWords.size(); // wtf
+                    foundWords.size(); // getting away with it
 
                 Document foundWord = foundWords.get(0);
 
