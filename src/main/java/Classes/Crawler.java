@@ -23,7 +23,27 @@ public class Crawler extends Thread {
 
     private final String USER_AGENT = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
 
-    Crawler() {
+    public static void main(String args[]){
+
+        int threadsLimit;
+
+        if(args.length == 0) {
+
+            threadsLimit = 5;
+            System.out.println("Default Threads limit (5) is being used");
+
+        }else {
+            threadsLimit = Integer.parseInt(args[0]);
+        }
+
+        for(int i=0;i<threadsLimit;i++){
+            (new Crawler()).start();
+        }
+
+        //new Crawler().run();
+    }
+
+    private Crawler() {
         super();
         this.DBConn = DBConnection.getInstance();
     }
@@ -108,6 +128,7 @@ public class Crawler extends Thread {
             title = doc.head().selectFirst("meta[name='og:title']");
 
 
+
         Element description = doc.head().selectFirst("meta[name='description']");
         if(description == null)
                 description = doc.head().selectFirst("meta[name='og:description']");
@@ -124,7 +145,7 @@ public class Crawler extends Thread {
 
         String bodyContent = doc.body().toString();
 
-        for (Element link : links) {
+        /*for (Element link : links) {
             String eachUrl = link.attr("abs:href");
 
             if(eachUrl.isEmpty())
@@ -141,7 +162,7 @@ public class Crawler extends Thread {
 
             DBConn.insertIntoCollection(new Document().append("url", eachUrl), DBConnection.SEED_LIST);
 
-        }
+        }*/
 
 
         DBConn.insertIntoCollection(
@@ -149,12 +170,12 @@ public class Crawler extends Thread {
                         .append("url", url)
                         .append("outLinks", links.size())
                         .append("body", bodyContent)
-                        .append("inLinks", 0)
+                        .append("indexed", false)
                         .append("description", description != null ? description.attr("content") : "")
                         .append("title", title != null ? title.text() : "")
                         .append("keywords", keywordsSeparated != null ? Arrays.asList(keywordsSeparated.attr("content").split("\\s*,\\s*")) : "")
 
-                , DBConnection.INDEXED_URLs
+                , DBConnection.FETCHED_URLs
         );
 
     }

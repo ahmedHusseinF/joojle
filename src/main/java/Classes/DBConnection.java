@@ -1,23 +1,27 @@
 package Classes;
 
-import com.mongodb.client.FindIterable;
+import com.mongodb.Block;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.bson.conversions.Bson;
 
-public class DBConnection {
+import java.util.ArrayList;
+import java.util.List;
+
+class DBConnection {
 
     private static DBConnection instance = null;
 
     private final MongoDatabase database;
 
     private static final String DB_NAME = "joojle";
-    public static final String SEED_LIST = "SeedList";
-    public static final String INDEXED_URLs = "IndexedURLs";
-    public static final String DISALLOWED_URLs = "DisallowedURLs";
-
+    static final String SEED_LIST = "SeedList";
+    static final String FETCHED_URLs = "FetchedURLs";
+    static final String INDEXED_URLs = "IndexedURLs";
 
 
     private DBConnection() {
@@ -25,62 +29,97 @@ public class DBConnection {
         this.database = client.getDatabase(DB_NAME);
     }
 
-    public Document getLatestEntry(String collection) {
+    Document getLatestEntry(String collection, boolean... indexer) {
+
         synchronized (database) {
-            return this.database.getCollection(collection).findOneAndDelete(new Document());
+            if (indexer.length == 0) // true if not coming from indexer
+                return database.getCollection(collection).findOneAndDelete(new Document());
+            else
+                return database.getCollection(collection).find(Filters.eq("indexed", false)).first();
         }
     }
 
-    public static DBConnection getInstance() {
-        if(instance == null) {
+
+    static DBConnection getInstance() {
+        if (instance == null) {
             instance = new DBConnection();
         }
 
         return instance;
     }
 
-    public boolean isThisObjectExist(Document obj, String collection){
+    boolean isThisObjectExist(Bson filter, String collection) {
 
-        synchronized (database){
-            return database.getCollection(collection).count(obj) > 0;
+        synchronized (database) {
+            return database.getCollection(collection).count(filter) > 0;
         }
 
     }
 
-    public boolean updateCollection(Document obj, Document filter, String collection){
-        synchronized (database){
+    ArrayList<Document> getDocumentsByFilter(Bson filter, String collection) {
+        synchronized (database) {
+            MongoCollection<Document> mongoCollection = database.getCollection(collection);
+
+            ArrayList<Document> documentsFetched = new ArrayList<>();
+
+            Block<Document> accumelateDocuments = new Block<Document>() {
+                @Override
+                public void apply(final Document document) {
+                    documentsFetched.add(document);
+                }
+            };
+
+            mongoCollection.find(filter).forEach(accumelateDocuments);
+
+            return documentsFetched;
+        }
+    }
+
+    void insertManyIntoCollection(List<Document> docs, String collection) {
+        try {
+
+            MongoCollection<Document> mongoCollection = this.database.getCollection(collection);
+            mongoCollection.insertMany(docs);
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+
+    }
+
+
+    void updateDocumentInCollection(Bson obj, Bson filter, String collection) {
+        synchronized (database) {
             try {
 
                 MongoCollection mongoCollection = this.database.getCollection(collection);
                 mongoCollection.updateOne(filter, obj);
-                return true;
-
-            }catch (Exception e){
-
-                System.out.println(e.getMessage());
-                return false;
-
-            }
-
-        }
-    }
-
-    public void insertIntoCollection(Document obj, String collection) {
-        synchronized (database) {
-            try {
-
-                MongoCollection<Document> mongoCollection = this.database.getCollection(collection);
-                mongoCollection.insertOne(obj);
-
 
             } catch (Exception e) {
 
                 System.out.println(e.getMessage());
 
-
             }
 
         }
+    }
+
+    void insertIntoCollection(Document obj, String collection) {
+        try {
+
+            MongoCollection<Document> mongoCollection = database.getCollection(collection);
+            mongoCollection.insertOne(obj);
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+
     }
 
 }
