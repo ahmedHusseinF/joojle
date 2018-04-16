@@ -9,13 +9,15 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jsoup.Jsoup;
 
+import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Indexer extends Thread {
+public class Indexer {
 
 
     private String stopWords[];
@@ -24,7 +26,7 @@ public class Indexer extends Thread {
     public static void main(String arg[]) {
         Indexer indexer = new Indexer();
 
-        indexer.start();
+        indexer.run();
     }
 
     private Indexer() {
@@ -56,109 +58,120 @@ public class Indexer extends Thread {
             System.out.println(exception.getMessage());
         }
 
-        return lines.toArray(new String[lines.size()]);
+        return lines.toArray(new String[0]);
     }
 
 
-    private void parseDocument(String html, String url) {
+    private HashMap<String, Document> parseDocument(String body, String url) throws Exception {
 
-        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+        org.jsoup.nodes.Document doc = Jsoup.parse(body);
 
         //Parse document into string of words and removing all short words
         String text = doc.text(); // get all text in this document
 
+        // get each word in the doc as seperate string
+        List<String> wordsList = new LinkedList<>(Arrays.asList(text.split("\\s+")));
 
         //Remove all stop words from the parsed document
         for (String stopWord : stopWords) {
-            Matcher matchStopWords = Pattern.compile(" " + stopWord + " ").matcher(text);
-
-            text = matchStopWords.replaceAll(" ");
+            wordsList.removeIf(str -> str.equals(stopWord));
         }
+
+        // remove strings of only numbers and empty strings
+        wordsList.removeIf(word -> (word.matches("\\d+") || word.isEmpty()));
+
+        //remove special charcters from words
+        UnaryOperator<String> uoRef = (word) -> word.replaceAll("[^\\w]", "");
+        wordsList.replaceAll(uoRef);
 
 
         //Convert the parsed text document into array of strings
-        String[] words = text.split("\\s+");
-
-        //remove special charcters from words
-        for (int i = 0; i < words.length; i++) {
-            words[i] = words[i].replaceAll("[^\\w]", "");
+        //String[] words = Arrays.copyOf(wordsList, wordsList.size(), String[].class);//(String[]) wordsList.toArray();
+        String[] words = new String[wordsList.size()];
+        for (int i = 0; i < wordsList.size(); i++) {
+            words[i] = wordsList.get(i);
         }
 
-        int wordCountInText;
+        // calculate occurences for all words in a map
+        HashMap<String, List<Integer>> occurences = new HashMap<>();
+        int index = 1;
+        for (String wordsIterator : words) {
+
+            if (!occurences.containsKey(wordsIterator)) {
+                List<Integer> wordOcc = new ArrayList<>();
+                wordOcc.add(index);
+                occurences.put(wordsIterator, wordOcc);
+            } else {
+                List<Integer> wordOcc = occurences.get(wordsIterator);
+                wordOcc.add(index);
+                occurences.put(wordsIterator, wordOcc);
+            }
+
+            index++;
+        }
+
 
         HashMap<String, Document> wordsDocuments = new HashMap<>();
 
-        // insert all words in database while having
         for (String word : words) {
 
             if (wordsDocuments.containsKey(word)) {
                 continue; // skip this word we already processed it in this document
             }
 
-            wordCountInText = 0;
-
-            Matcher wordPattern = Pattern
-                    .compile(word)
-                    .matcher(text);
-
-            while (wordPattern.find())
-                wordCountInText++;
-
-
-            ArrayList<Integer> occurrences = new ArrayList<>();
-
-            // find all occurrences of string
-            //int index = text.indexOf(word);
-            //while (index >= 0) {
-            //    occurrences.add(index);
-            //    index = text.indexOf(word, index + 1);
-            //}
+            if(word.isEmpty()) {
+                continue; // i hate empty words
+            }
 
 
             wordsDocuments.put(
                     word,
                     new Document()
                             .append("url", url)
-                            //.append("occurrences", (occurrences.size() == 0) ? "" : occurrences.subList(0, occurrences.size() - 1))
-                            .append("count", wordCountInText)
+                            .append("occurrences", occurences.get(word))
+                            .append("count", occurences.get(word).size())
             );
 
         }
 
-        saveWordsInDB(wordsDocuments);
+
+        return wordsDocuments;
     }
 
-    private HashMap<String, Object> getLatestUrlData() {
-        org.bson.Document d = DBconn.getLatestEntry(DBConnection.FETCHED_URLs, true);
+    private HashMap<String, String> getLatestUrlData() {
+        Document d = DBconn.getLatestEntry(DBConnection.FETCHED_URLs, true);
 
         if (d == null)
             return null;
 
-        HashMap<String, Object> h = new HashMap<>();
+        HashMap<String, String> h = new HashMap<>();
         h.put("url", d.get("url", String.class));
         h.put("body", d.get("body", String.class));
 
         return h;
     }
 
-    public void run() {
+    private void run() {
         while (true) {
             try {
 
-                HashMap data = this.getLatestUrlData();
+                HashMap<String, String> data = this.getLatestUrlData();
 
-                if (data == null)
-                    throw new Exception("Nulled Data");
-
-                parseDocument(data.get("body").toString(), data.get("url").toString());
+                if (data == null) {
+                    System.out.println("Fetched Urls Collection is Empty");
+                    break;
+                }
 
                 // update the fetched urls to be indexed and reduce its HUGE size by deleting body's html
                 Bson updateFetcehedDocument = Updates.combine(Updates.set("indexed", true), Updates.unset("body"));
+                DBconn.updateDocumentInCollection(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
 
-                DBconn.updateDocumentInCollection(updateFetcehedDocument, Filters.eq("url", data.get("url").toString()), DBConnection.FETCHED_URLs);
+                HashMap<String, Document> wordsDocuments = parseDocument(data.get("body"), data.get("url"));
 
-                System.out.println("Processed this link: " + data.get("url").toString());
+                saveWordsInDB(wordsDocuments);
 
+
+                System.out.println("Processed this link: " + data.get("url"));
 
             } catch (Exception e) {
                 System.out.println("generic exception: " + e.toString());
@@ -169,39 +182,39 @@ public class Indexer extends Thread {
         }
     }
 
-    private void saveWordsInDB(HashMap<String, Document> wordsDocuments) {
+    private void saveWordsInDB(HashMap<String, Document> wordsDocuments) throws Exception {
         //  an insertion query to insert the word int the invertedIndex if it doesn't exisit, if exists just add url into list of urls,
         // if url is already existing just add the index position to array of occurunces.i.e the word existed more than one time in the document
 
         List<Document> toBeInserted = new ArrayList<>(); // for new words only
 
-
         for (HashMap.Entry<String, Document> wordDocument : wordsDocuments.entrySet()) {
 
             Document ourWordDocument = new Document().append("word", wordDocument.getKey());
 
-            if (DBconn.isThisObjectExist(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs)) {
+            boolean wordExistsInDB = DBconn.isThisObjectExist(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
+
+            if (wordExistsInDB) {
 
                 // update the index
                 ArrayList<Document> foundWords =
-                        DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs);
+                        DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
                 if (foundWords.size() > 1)
-                    foundWords.size(); // getting away with it
+                    throw new Exception("Word: " + wordDocument.getKey() + " have more than 1 entry in DB"); // how did that happen ?
 
                 Document foundWord = foundWords.get(0);
 
                 ArrayList<Document> urls = foundWord.get("urls", ArrayList.class);
 
                 urls.add(
-                        wordDocument.getValue()
+                         wordDocument.getValue()
                 );
 
-                Bson updatedParts = Updates.combine(Updates.set("urls", urls.subList(0, urls.size() - 1)));
-
+                Bson updatedParts = Updates.combine(Updates.set("urls", urls));
 
                 // update words as they are seen in the loop
-                DBconn.updateDocumentInCollection(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_URLs);
+                DBconn.updateDocumentInCollection(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
 
             } else {
@@ -219,7 +232,7 @@ public class Indexer extends Thread {
 
 
         if (toBeInserted.size() != 0)
-            DBconn.insertManyIntoCollection(toBeInserted, DBConnection.INDEXED_URLs);
+            DBconn.insertManyIntoCollection(toBeInserted, DBConnection.INDEXED_WORDs);
 
     }
 

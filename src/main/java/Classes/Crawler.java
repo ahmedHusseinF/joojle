@@ -4,10 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
+import com.mongodb.client.model.Filters;
 import crawlercommons.robots.BaseRobotRules;
 import crawlercommons.robots.SimpleRobotRules;
 import crawlercommons.robots.SimpleRobotRulesParser;
@@ -23,24 +29,42 @@ public class Crawler extends Thread {
 
     private final String USER_AGENT = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
 
         int threadsLimit;
 
-        if(args.length == 0) {
+        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        System.out.println("Enter a number for maximum threads: ");
 
+        // Scans the next token of the input as an int.
+        threadsLimit = reader.nextInt();
+
+        if (threadsLimit == 0) {
             threadsLimit = 5;
             System.out.println("Default Threads limit (5) is being used");
-
-        }else {
-            threadsLimit = Integer.parseInt(args[0]);
         }
 
-        for(int i=0;i<threadsLimit;i++){
-            (new Crawler()).start();
+        //once finished
+        reader.close();
+
+        List<Crawler> crawlers = new ArrayList<>();
+
+        for (int i = 0; i < threadsLimit; i++) {
+            Crawler aCrawler = new Crawler();
+            crawlers.add(aCrawler);
+            aCrawler.start();
         }
 
-        //new Crawler().run();
+
+        crawlers.forEach(crawler -> {
+            try {
+                crawler.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace(System.out);
+            }
+        });
+
+
     }
 
     private Crawler() {
@@ -51,7 +75,7 @@ public class Crawler extends Thread {
 
     private String getLatestSeed() {
 
-        return this.DBConn.getLatestEntry(DBConnection.SEED_LIST).get("url", String.class);
+        return DBConn.getLatestEntry(DBConnection.SEED_LIST).get("url", String.class);
 
     }
 
@@ -82,11 +106,14 @@ public class Crawler extends Thread {
     }
 
     private String sentGETRequest(String url) throws IOException {
+
         URL uri = new URL(url);
+
 
         HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
 
         conn.setRequestMethod("GET");
+        conn.setConnectTimeout(5000); //set timeout to 5 seconds
         conn.setRequestProperty("User-agent", USER_AGENT);
 
         int responseCode = conn.getResponseCode();
@@ -106,7 +133,7 @@ public class Crawler extends Thread {
 
             return response.toString();
 
-        } else if(responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
+        } else if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
 
             String newLocationOfUrl = conn.getHeaderField("location"); // standard response header if the url has been moved
 
@@ -117,57 +144,64 @@ public class Crawler extends Thread {
         }
     }
 
-    private void parseDocument(String html, String url) throws IOException {
+    private void parseDocument(String html, String normalizedUrl) throws IOException, URISyntaxException {
 
         org.jsoup.nodes.Document doc = Jsoup.parse(html);
 
         Elements links = doc.body().select("a[href]"); // get all links that points to other pages, not buttons
 
         Element title = doc.head().selectFirst("title");
-        if(title == null)
+        if (title == null)
             title = doc.head().selectFirst("meta[name='og:title']");
 
 
-
         Element description = doc.head().selectFirst("meta[name='description']");
-        if(description == null)
-                description = doc.head().selectFirst("meta[name='og:description']");
-        if(description == null)
+        if (description == null)
+            description = doc.head().selectFirst("meta[name='og:description']");
+        if (description == null)
             description = doc.head().selectFirst("meta[name='twitter:description']");
 
 
         Element keywordsSeparated = doc.head().selectFirst("meta[name='keywords']");
-        if(keywordsSeparated == null)
+        if (keywordsSeparated == null)
             keywordsSeparated = doc.head().selectFirst("meta[name='og:keywords']");
-        if(keywordsSeparated == null)
+        if (keywordsSeparated == null)
             keywordsSeparated = doc.head().selectFirst("meta[name='twitter:keywords']");
 
 
         String bodyContent = doc.body().toString();
 
-        /*for (Element link : links) {
+        List<Document> linksDocuments = new ArrayList<>();
+
+        for (Element link : links) {
             String eachUrl = link.attr("abs:href");
 
-            if(eachUrl.isEmpty())
+            if (eachUrl.isEmpty())
                 continue;
 
-            if(DBConn.isThisObjectExist(new Document().append("url", eachUrl), DBConnection.SEED_LIST))
+            String newNormalizedUrl = new URI(eachUrl).normalize().toString();
+
+            if (DBConn.isThisObjectExist(Filters.eq("url", newNormalizedUrl), DBConnection.SEED_LIST))
                 continue;
 
-            if(DBConn.isThisObjectExist(new Document().append("url", eachUrl), DBConnection.INDEXED_URLs))
+            if (DBConn.isThisObjectExist(Filters.eq("url", newNormalizedUrl), DBConnection.INDEXED_WORDs))
                 continue;
 
-            if(new URL(eachUrl).getProtocol().equals("mailto"))
+            String protocol = new URL(eachUrl).getProtocol();
+
+            if (!protocol.equals("http") && !protocol.equals("https"))
                 continue;
 
-            DBConn.insertIntoCollection(new Document().append("url", eachUrl), DBConnection.SEED_LIST);
+            linksDocuments.add(new Document().append("url", newNormalizedUrl));
+        }
 
-        }*/
+        // insert one big chunk and not one at a time in the loop
+        DBConn.insertManyIntoCollection(linksDocuments, DBConnection.SEED_LIST);
 
-
+        // insert the indexed document
         DBConn.insertIntoCollection(
                 new Document()
-                        .append("url", url)
+                        .append("url", normalizedUrl)
                         .append("outLinks", links.size())
                         .append("body", bodyContent)
                         .append("indexed", false)
@@ -192,28 +226,34 @@ public class Crawler extends Thread {
 
             String url = this.getLatestSeed();
 
-            boolean isAllowed = this.robotsSafe(url);
+            String normalizedUrl = new URI(url).normalize().toString();
+
+            boolean isAllowed = this.robotsSafe(normalizedUrl);
 
             if (isAllowed) {
-                String res = this.sentGETRequest(url);
+                String res = this.sentGETRequest(normalizedUrl);
 
-                if( res == null || res.isEmpty() )
+                if (res == null || res.isEmpty())
                     throw new Exception("Empty page Document at url " + url);
 
 
-                this.parseDocument(res, url);
+                parseDocument(res, normalizedUrl);
 
-                System.out.println("Processed this link " + url);
+                System.out.println("Processed this link " + normalizedUrl);
+
+            } else {
+
+                System.out.println("url: " + normalizedUrl + " isn't robots safe");
             }
 
 
-        } catch (IOException e) {
-            System.out.println("IOException: " + e.toString());
         } catch (Exception e) {
             System.out.println("generic exception: " + e.toString());
+            System.out.println("exception message: " + e.getMessage());
             System.out.println("exception cause: " + e.getCause());
             System.out.print("exception trace: ");
             e.printStackTrace(System.out);
+            System.out.println();
         }
     }
 }

@@ -2,6 +2,7 @@ package Classes;
 
 import com.mongodb.Block;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -21,12 +22,15 @@ class DBConnection {
     private static final String DB_NAME = "joojle";
     static final String SEED_LIST = "SeedList";
     static final String FETCHED_URLs = "FetchedURLs";
-    static final String INDEXED_URLs = "IndexedURLs";
+    static final String INDEXED_WORDs = "IndexedWords";
 
 
     private DBConnection() {
-        MongoClient client = new MongoClient(new MongoClientURI("mongodb://admin:EDVeunnibidriz2@ds157528.mlab.com:57528/joojle"));
-        this.database = client.getDatabase(DB_NAME);
+
+        // hardcoded connection string to ease the portability
+        // old database mongodb://admin:EDVeunnibidriz2@ds157528.mlab.com:57528/joojle // instantiate with new MongoClientURI
+        MongoClient client = new MongoClient("localhost", 27017);
+        database = client.getDatabase(DB_NAME);
     }
 
     Document getLatestEntry(String collection, boolean... indexer) {
@@ -96,8 +100,8 @@ class DBConnection {
             try {
 
                 MongoCollection mongoCollection = this.database.getCollection(collection);
-                mongoCollection.updateOne(filter, obj);
-
+                UpdateResult res = mongoCollection.updateOne(filter, obj);
+                res.wasAcknowledged(); // for debugging purposes
             } catch (Exception e) {
 
                 System.out.println(e.getMessage());
