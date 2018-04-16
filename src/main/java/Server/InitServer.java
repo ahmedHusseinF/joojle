@@ -8,6 +8,15 @@ import static spark.Spark.*;
 public class InitServer {
     public static void main(String[] args) {
 
+        new InitServer();
+
+    }
+
+    private InitServer(){
+        initRoutes();
+    }
+
+    private void initRoutes(){
         get("/q/:query", (req, res) -> {
             String query = req.params("query");
             Document responseObject = new Document();
@@ -40,6 +49,5 @@ public class InitServer {
             res.header("Content-Length", Integer.toString(responseObject.toJson().getBytes().length));
             return responseObject.toJson();
         });
-
     }
 }
