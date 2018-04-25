@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import crawlercommons.robots.BaseRobotRules;
 import crawlercommons.robots.SimpleRobotRules;
 import crawlercommons.robots.SimpleRobotRulesParser;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -181,28 +183,46 @@ public class Crawler extends Thread {
 
             String newNormalizedUrl = new URI(eachUrl).normalize().toString();
 
-            if (DBConn.isThisObjectExist(Filters.eq("url", newNormalizedUrl), DBConnection.SEED_LIST))
+            Bson equalNormalizedUrl = Filters.eq("url", newNormalizedUrl);
+
+            if (DBConn.isThisObjectExist(equalNormalizedUrl, DBConnection.SEED_LIST))
                 continue;
 
-            if (DBConn.isThisObjectExist(Filters.eq("url", newNormalizedUrl), DBConnection.INDEXED_WORDs))
+            if (DBConn.isThisObjectExist(equalNormalizedUrl, DBConnection.FETCHED_URLs)){
+                ArrayList<Document> fetchedUrl = DBConn.getDocumentsByFilter(equalNormalizedUrl, DBConnection.FETCHED_URLs);
+
+                int currentUrlInLinks = fetchedUrl.get(0).get("inLinks", Integer.class);
+
+                //fetchedUrl.get(0).put("inLinks", ++currentUrlInLinks);
+
+                Bson updatedPortion = Updates.set("inLinks", ++currentUrlInLinks);
+
+                DBConn.replaceDocumentByFilter(updatedPortion, equalNormalizedUrl, DBConnection.FETCHED_URLs);
+
                 continue;
+            }
+
 
             String protocol = new URL(eachUrl).getProtocol();
 
             if (!protocol.equals("http") && !protocol.equals("https"))
                 continue;
 
+
+
             linksDocuments.add(new Document().append("url", newNormalizedUrl));
         }
 
-        // insert one big chunk and not one at a time in the loop
-        DBConn.insertManyIntoCollection(linksDocuments, DBConnection.SEED_LIST);
+        if(linksDocuments.size() > 0)
+            // insert one big chunk and not one at a time in the loop
+            DBConn.insertManyIntoCollection(linksDocuments, DBConnection.SEED_LIST);
 
         // insert the indexed document
         DBConn.insertIntoCollection(
                 new Document()
                         .append("url", normalizedUrl)
                         .append("outLinks", links.size())
+                        .append("inLinks", 0)
                         .append("body", bodyContent)
                         .append("indexed", false)
                         .append("description", description != null ? description.attr("content") : "")

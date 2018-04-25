@@ -9,13 +9,10 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jsoup.Jsoup;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.function.UnaryOperator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Indexer {
 
@@ -62,7 +59,7 @@ public class Indexer {
     }
 
 
-    private HashMap<String, Document> parseDocument(String body, String url) throws Exception {
+    private HashMap<String, Document> parseDocument(String body, String url) {
 
         org.jsoup.nodes.Document doc = Jsoup.parse(body);
 
@@ -119,7 +116,7 @@ public class Indexer {
                 continue; // skip this word we already processed it in this document
             }
 
-            if(word.isEmpty()) {
+            if (word.isEmpty()) {
                 continue; // i hate empty words
             }
 
@@ -164,7 +161,7 @@ public class Indexer {
 
                 // update the fetched urls to be indexed and reduce its HUGE size by deleting body's html
                 Bson updateFetcehedDocument = Updates.combine(Updates.set("indexed", true), Updates.unset("body"));
-                DBconn.updateDocumentInCollection(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
+                DBconn.replaceDocumentByFilter(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
 
                 HashMap<String, Document> wordsDocuments = parseDocument(data.get("body"), data.get("url"));
 
@@ -205,6 +202,7 @@ public class Indexer {
 
                 Document foundWord = foundWords.get(0);
 
+                @SuppressWarnings("unchecked")
                 ArrayList<Document> urls = foundWord.get("urls", ArrayList.class);
 
                 urls.add(
@@ -214,7 +212,7 @@ public class Indexer {
                 Bson updatedParts = Updates.combine(Updates.set("urls", urls));
 
                 // update words as they are seen in the loop
-                DBconn.updateDocumentInCollection(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
+                DBconn.replaceDocumentByFilter(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
 
             } else {

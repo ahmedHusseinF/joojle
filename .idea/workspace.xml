@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d8fd6a8-6558-42c2-af42-decbabd9e3c8" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.0/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/Ranker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/Ranker.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Classes/Searcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/Crawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/Crawler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/DBConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/DBConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Classes/Indexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Classes/Indexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Server/InitServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/InitServer.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -58,17 +60,20 @@
       <file leaf-file-name="DBConnection.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/Classes/DBConnection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="26" selection-start-line="26" selection-end-line="26" />
+            <state relative-caret-position="269">
+              <caret line="97" column="61" selection-start-line="97" selection-start-column="61" selection-end-line="97" selection-end-column="61" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Crawler.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Crawler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Crawler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="562">
-              <caret line="240" selection-start-line="240" selection-end-line="240" />
+            <state relative-caret-position="15">
+              <caret line="168" lean-forward="true" selection-start-line="168" selection-end-line="168" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -76,8 +81,20 @@
       <file leaf-file-name="Indexer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Indexer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2340">
-              <caret line="165" column="61" selection-start-line="165" selection-start-column="61" selection-end-line="165" selection-end-column="61" />
+            <state relative-caret-position="107">
+              <caret line="162" column="20" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Searcher.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Searcher.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="19" selection-start-line="19" selection-end-line="19" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -86,16 +103,16 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Ranker.java">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="16" lean-forward="true" selection-start-column="16" selection-end-column="16" />
+              <caret column="16" selection-start-column="16" selection-end-column="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InitServer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="InitServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/Server/InitServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+            <state relative-caret-position="375">
+              <caret line="32" selection-start-line="32" selection-end-line="32" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -111,6 +128,11 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Many</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -295,7 +317,7 @@
       <map>
         <entry key="$PROJECT_DIR$" value="6091096535000" />
         <entry key="$PROJECT_DIR$/.gradle" value="0" />
-        <entry key="$PROJECT_DIR$/build.gradle" value="2472688663" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="1624939369" />
         <entry key="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" value="566444372" />
         <entry key="$PROJECT_DIR$/settings.gradle" value="255000388" />
       </map>
@@ -471,12 +493,13 @@
       <list>
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
         <option value="$PROJECT_DIR$/src/main/java/Classes/CrawlerMain.java" />
-        <option value="$PROJECT_DIR$/src/main/java/Classes/Crawler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/Classes/DBConnection.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/src/main/java/Classes/Indexer.java" />
         <option value="$PROJECT_DIR$/src/main/java/Classes/Ranker.java" />
         <option value="$PROJECT_DIR$/src/main/java/Server/InitServer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Classes/Searcher.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Classes/Indexer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Classes/DBConnection.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Classes/Crawler.java" />
       </list>
     </option>
   </component>
@@ -492,7 +515,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="311" />
     <option name="y" value="38" />
     <option name="width" value="989" />
@@ -504,6 +527,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -545,12 +569,33 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="Server" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="joojle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="joojle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Gradle: org.mongodb:bson:3.6.3" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="joojle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Gradle: org.mongodb:bson:3.6.3" type="70bed36:NamedLibraryElementNode" />
+              <item name="bson-3.6.3.jar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="joojle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Gradle: org.mongodb:bson:3.6.3" type="70bed36:NamedLibraryElementNode" />
+              <item name="bson-3.6.3.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="bson" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -561,6 +606,7 @@
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.appearance" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -574,7 +620,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.InitServer">
+  <component name="RunManager" selected="Application.Crawler">
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
     </configuration>
@@ -681,8 +727,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.InitServer" />
         <item itemvalue="Application.Crawler" />
+        <item itemvalue="Application.InitServer" />
         <item itemvalue="Application.Indexer" />
         <item itemvalue="Application.CrawlerMain" />
         <item itemvalue="Application.Main" />
@@ -707,74 +753,58 @@
       <workItem from="1523478911037" duration="5452000" />
       <workItem from="1523827708333" duration="2152000" />
       <workItem from="1523890323110" duration="978000" />
+      <workItem from="1524240626532" duration="10026000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="65015000" />
+    <option name="totallyTimeSpent" value="82744000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1368" height="741" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.49707174" weight="0.32901135" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50292826" side_tool="true" weight="0.328594" />
       <window_info anchor="right" id="Maven Projects" order="5" />
       <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.5921875" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.89465153" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.8203125" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.328594" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20644216" />
-      <window_info anchor="bottom" id="Build" order="10" weight="0.51026857" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21299094" />
       <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Gradle" order="3" weight="0.329429" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.5434439" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.5202593" />
       <window_info id="Favorites" order="4" side_tool="true" />
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Gradle" order="3" weight="0.329429" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20644216" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.5921875" />
       <window_info anchor="bottom" id="Inspection Results" order="13" weight="0.8957346" />
-      <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.328594" />
-      <window_info anchor="right" id="Database" order="6" />
-      <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.328594" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50292826" side_tool="true" weight="0.328594" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.5434439" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.49707174" weight="0.32913387" />
-      <window_info anchor="right" id="Maven Projects" order="5" />
-      <window_info id="Favorites" order="4" side_tool="true" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Build" order="10" weight="0.51026857" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.328594" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Gradle" order="3" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2985782" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="4" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.20644216" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Inspection Results" order="13" weight="0.8957346" />
       <window_info id="Designer" order="2" />
+      <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
       <window_info id="UI Designer" order="3" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.328594" />
       <window_info anchor="right" id="Database" order="6" />
@@ -782,13 +812,13 @@
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.328594" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.5055292" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50292826" side_tool="true" weight="0.328594" />
       <window_info anchor="bottom" id="Build" order="10" weight="0.51026857" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.49707174" weight="0.32913387" />
       <window_info anchor="right" id="Maven Projects" order="5" />
-      <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
+      <window_info id="Favorites" order="4" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -805,7 +835,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="33" />
+      <option name="time" value="35" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
@@ -818,10 +848,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/Runnable.java" />
-    <entry file="file://$PROJECT_DIR$/out/production/classes/Main.class" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/RobotRule.java" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.crawler-commons/crawler-commons/0.9/f1e2b8a67fe31307fe505629ab9a57bcbfab243e/crawler-commons-0.9-sources.jar!/crawlercommons/CrawlerCommons.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/Main.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.11.2/f0f1f0d1ceb2cd515c98649d9ad6b8b9814899b2/jsoup-1.11.2-sources.jar!/org/jsoup/nodes/Document.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.11.2/f0f1f0d1ceb2cd515c98649d9ad6b8b9814899b2/jsoup-1.11.2-sources.jar!/org/jsoup/nodes/Element.java" />
@@ -848,7 +874,6 @@
     <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/net/HttpURLConnection.java" />
     <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/util/function/Predicate.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver/3.6.3/18e993bfe2b20dcf31193a4ce41129812e3093a8/mongodb-driver-3.6.3-sources.jar!/com/mongodb/MongoDatabaseImpl.java" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/bson/3.6.3/d510ad39061062c574e71893e54092b6ac5d4bf5/bson-3.6.3-sources.jar!/org/bson/Document.java" />
     <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/String.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-core/3.6.3/e32e365c8f2d0d9e558f0c7a3c4727d9ec3b36cb/mongodb-driver-core-3.6.3-sources.jar!/com/mongodb/client/model/Filters.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver/3.6.3/18e993bfe2b20dcf31193a4ce41129812e3093a8/mongodb-driver-3.6.3-sources.jar!/com/mongodb/client/MongoCollection.java" />
@@ -882,38 +907,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Indexer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2340">
-          <caret line="165" column="61" selection-start-line="165" selection-start-column="61" selection-end-line="165" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Crawler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="240" selection-start-line="240" selection-end-line="240" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/DBConnection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Ranker.java">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="16" lean-forward="true" selection-start-column="16" selection-end-column="16" />
+          <caret column="16" selection-start-column="16" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar!/java/lang/String.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4755">
+          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/bson/3.6.3/d510ad39061062c574e71893e54092b6ac5d4bf5/bson-3.6.3-sources.jar!/org/bson/FieldNameValidator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/bson/3.6.3/d510ad39061062c574e71893e54092b6ac5d4bf5/bson-3.6.3-sources.jar!/org/bson/Document.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="314" column="40" lean-forward="true" selection-start-line="314" selection-start-column="40" selection-end-line="314" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Server/InitServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+        <state relative-caret-position="375">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Searcher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-core/3.6.3/e32e365c8f2d0d9e558f0c7a3c4727d9ec3b36cb/mongodb-driver-core-3.6.3-sources.jar!/com/mongodb/Block.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Indexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="162" column="20" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/DBConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="97" column="61" selection-start-line="97" selection-start-column="61" selection-end-line="97" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Classes/Crawler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="168" lean-forward="true" selection-start-line="168" selection-end-line="168" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
