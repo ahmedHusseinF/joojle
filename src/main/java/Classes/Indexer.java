@@ -16,9 +16,9 @@ import java.util.function.UnaryOperator;
 
 public class Indexer {
 
-
     private String stopWords[];
     private DBConnection DBconn;
+    private String stemmers[];
 
     public static void main(String arg[]) {
         Indexer indexer = new Indexer();
@@ -28,7 +28,7 @@ public class Indexer {
 
     private Indexer() {
         stopWords = getStopWords();
-
+        stemmers = getStemmers();
         DBconn = DBConnection.getInstance();
     }
 
@@ -38,7 +38,6 @@ public class Indexer {
         try {
             fileReader = new FileReader("StopWords.txt");
 
-
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             String line;
@@ -46,7 +45,6 @@ public class Indexer {
                 lines.add(line);
             }
             bufferedReader.close();
-
 
         } catch (FileNotFoundException exception) {
             System.out.println("The file was not found.");
@@ -58,6 +56,36 @@ public class Indexer {
         return lines.toArray(new String[0]);
     }
 
+    public String[] getStemmers() {
+        FileReader fileReader;
+        List<String> lines = new ArrayList<>();
+        try {
+            fileReader = new FileReader("Stemmers.txt");
+
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                lines.add(line);
+            }
+            bufferedReader.close();
+
+        } catch (FileNotFoundException exception) {
+            System.out.println("The file was not found.");
+        } catch (IOException exception) {
+
+            System.out.println(exception.getMessage());
+        }
+
+        return lines.toArray(new String[0]);
+    }
+
+    public static String stem(String string, String suffix) {
+        if (string.endsWith(suffix)) {
+            string = string.substring(0, string.length() - suffix.length());
+        }
+        return string;
+    }
 
     private HashMap<String, Document> parseDocument(String body, String url) {
 
@@ -80,7 +108,6 @@ public class Indexer {
         //remove special charcters from words
         UnaryOperator<String> uoRef = (word) -> word.replaceAll("[^\\w]", "");
         wordsList.replaceAll(uoRef);
-
 
         //Convert the parsed text document into array of strings
         //String[] words = Arrays.copyOf(wordsList, wordsList.size(), String[].class);//(String[]) wordsList.toArray();
@@ -107,7 +134,6 @@ public class Indexer {
             index++;
         }
 
-
         HashMap<String, Document> wordsDocuments = new HashMap<>();
 
         for (String word : words) {
@@ -120,10 +146,19 @@ public class Indexer {
                 continue; // i hate empty words
             }
 
+            //Stemming 
+            String StemmedWord = word;
+            //The first loop is to check if there are two suffixes like (ings)
+            for (int j = 0; j < 2; j++) {
+                for (int i = 0; i < stemmers.length; i++) {
+                    StemmedWord = stem(StemmedWord, stemmers[i]);
+                }
+            }
 
             wordsDocuments.put(
                     word,
                     new Document()
+                            .append("stem",StemmedWord)
                             .append("url", url)
                             .append("occurrences", occurences.get(word))
                             .append("count", occurences.get(word).size())
@@ -131,15 +166,15 @@ public class Indexer {
 
         }
 
-
         return wordsDocuments;
     }
 
     private HashMap<String, String> getLatestUrlData() {
         Document d = DBconn.getLatestEntry(DBConnection.FETCHED_URLs, true);
 
-        if (d == null)
+        if (d == null) {
             return null;
+        }
 
         HashMap<String, String> h = new HashMap<>();
         h.put("url", d.get("url", String.class));
@@ -167,7 +202,6 @@ public class Indexer {
 
                 saveWordsInDB(wordsDocuments);
 
-
                 System.out.println("Processed this link: " + data.get("url"));
 
             } catch (Exception e) {
@@ -194,26 +228,25 @@ public class Indexer {
             if (wordExistsInDB) {
 
                 // update the index
-                ArrayList<Document> foundWords =
-                        DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
+                ArrayList<Document> foundWords
+                        = DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
-                if (foundWords.size() > 1)
+                if (foundWords.size() > 1) {
                     throw new Exception("Word: " + wordDocument.getKey() + " have more than 1 entry in DB"); // how did that happen ?
-
+                }
                 Document foundWord = foundWords.get(0);
 
                 @SuppressWarnings("unchecked")
                 ArrayList<Document> urls = foundWord.get("urls", ArrayList.class);
 
                 urls.add(
-                         wordDocument.getValue()
+                        wordDocument.getValue()
                 );
 
                 Bson updatedParts = Updates.combine(Updates.set("urls", urls));
 
                 // update words as they are seen in the loop
                 DBconn.replaceDocumentByFilter(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
-
 
             } else {
                 // first time to insert the word in the index
@@ -228,11 +261,10 @@ public class Indexer {
 
         }
 
-
-        if (toBeInserted.size() != 0)
+        if (toBeInserted.size() != 0) {
             DBconn.insertManyIntoCollection(toBeInserted, DBConnection.INDEXED_WORDs);
+        }
 
     }
-
 
 }
