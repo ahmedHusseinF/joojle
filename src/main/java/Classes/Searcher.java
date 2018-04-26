@@ -5,6 +5,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Searcher  {
 
@@ -18,16 +19,16 @@ public class Searcher  {
         this.dbConnection = DBConnection.getInstance();
     }
 
-    public String[] getSimilarQueries(String[] q){
+    public void getSimilarQueries(String[] q){
         Bson filters = Filters.eq("");
 
         for (String word: q) {
             filters = Filters.or(filters, Filters.eq(word));
         }
 
-        ArrayList<Document> result = dbConnection.getDocumentsByFilter(filters, DBConnection.INDEXED_WORDs);
+        HashMap<String, Document> result = dbConnection.getDocumentsByFilter(filters, DBConnection.INDEXED_WORDs);
 
-        return ((String[]) result.toArray());
+        //return ((String[]) result.entrySet());
     }
 
 }
