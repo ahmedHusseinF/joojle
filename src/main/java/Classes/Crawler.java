@@ -8,10 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -41,7 +38,7 @@ public class Crawler extends Thread {
         // Scans the next token of the input as an int.
         threadsLimit = reader.nextInt();
 
-        if (threadsLimit == 0) {
+        if (threadsLimit <= 0) {
             threadsLimit = 5;
             System.out.println("Default Threads limit (5) is being used");
         }
@@ -189,7 +186,7 @@ public class Crawler extends Thread {
                 continue;
 
             if (DBConn.isThisObjectExist(equalNormalizedUrl, DBConnection.FETCHED_URLs)){
-                ArrayList<Document> fetchedUrl = DBConn.getDocumentsByFilter(equalNormalizedUrl, DBConnection.FETCHED_URLs);
+                HashMap<String, Document> fetchedUrl = DBConn.getDocumentsByFilter(equalNormalizedUrl, DBConnection.FETCHED_URLs);
 
                 int currentUrlInLinks = fetchedUrl.get(0).get("inLinks", Integer.class);
 

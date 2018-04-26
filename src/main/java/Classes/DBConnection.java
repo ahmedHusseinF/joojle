@@ -12,6 +12,7 @@ import org.bson.conversions.Bson;
 
 import javax.print.Doc;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class DBConnection {
@@ -61,15 +62,16 @@ class DBConnection {
 
     }
 
-    ArrayList<Document> getDocumentsByFilter(Bson filter, String collection) {
+    HashMap<String, Document> getDocumentsByFilter(Bson filter, String collection) {
         synchronized (database) {
             MongoCollection<Document> mongoCollection = database.getCollection(collection);
 
-            ArrayList<Document> documentsFetched = new ArrayList<>();
+            HashMap<String, Document> documentsFetched = new HashMap<>();
 
-            Block<Document> accumelateDocuments = documentsFetched::add;
+            Block<Document> accumelateDocuments = document -> documentsFetched.put(document.getString("url"), document);
 
             mongoCollection.find(filter).forEach(accumelateDocuments);
+
 
             return documentsFetched;
         }

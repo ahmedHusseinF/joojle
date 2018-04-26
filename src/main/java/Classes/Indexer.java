@@ -56,7 +56,7 @@ public class Indexer {
         return lines.toArray(new String[0]);
     }
 
-    public String[] getStemmers() {
+    private String[] getStemmers() {
         FileReader fileReader;
         List<String> lines = new ArrayList<>();
         try {
@@ -80,7 +80,7 @@ public class Indexer {
         return lines.toArray(new String[0]);
     }
 
-    public static String stem(String string, String suffix) {
+    private static String stem(String string, String suffix) {
         if (string.endsWith(suffix)) {
             string = string.substring(0, string.length() - suffix.length());
         }
@@ -150,8 +150,8 @@ public class Indexer {
             String StemmedWord = word;
             //The first loop is to check if there are two suffixes like (ings)
             for (int j = 0; j < 2; j++) {
-                for (int i = 0; i < stemmers.length; i++) {
-                    StemmedWord = stem(StemmedWord, stemmers[i]);
+                for (String stemmer : stemmers) {
+                    StemmedWord = stem(StemmedWord, stemmer);
                 }
             }
 
@@ -228,7 +228,7 @@ public class Indexer {
             if (wordExistsInDB) {
 
                 // update the index
-                ArrayList<Document> foundWords
+                HashMap<String, Document> foundWords
                         = DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
                 if (foundWords.size() > 1) {
