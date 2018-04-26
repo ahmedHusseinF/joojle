@@ -9,13 +9,10 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jsoup.Jsoup;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.function.UnaryOperator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Indexer {
 
@@ -59,7 +56,7 @@ public class Indexer {
         return lines.toArray(new String[0]);
     }
 
-    public String[] getStemmers() {
+    private String[] getStemmers() {
         FileReader fileReader;
         List<String> lines = new ArrayList<>();
         try {
@@ -83,14 +80,14 @@ public class Indexer {
         return lines.toArray(new String[0]);
     }
 
-    public static String stem(String string, String suffix) {
+    private static String stem(String string, String suffix) {
         if (string.endsWith(suffix)) {
             string = string.substring(0, string.length() - suffix.length());
         }
         return string;
     }
 
-    private HashMap<String, Document> parseDocument(String body, String url) throws Exception {
+    private HashMap<String, Document> parseDocument(String body, String url) {
 
         org.jsoup.nodes.Document doc = Jsoup.parse(body);
 
@@ -153,8 +150,8 @@ public class Indexer {
             String StemmedWord = word;
             //The first loop is to check if there are two suffixes like (ings)
             for (int j = 0; j < 2; j++) {
-                for (int i = 0; i < stemmers.length; i++) {
-                    StemmedWord = stem(StemmedWord, stemmers[i]);
+                for (String stemmer : stemmers) {
+                    StemmedWord = stem(StemmedWord, stemmer);
                 }
             }
 
@@ -199,7 +196,7 @@ public class Indexer {
 
                 // update the fetched urls to be indexed and reduce its HUGE size by deleting body's html
                 Bson updateFetcehedDocument = Updates.combine(Updates.set("indexed", true), Updates.unset("body"));
-                DBconn.updateDocumentInCollection(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
+                DBconn.replaceDocumentByFilter(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
 
                 HashMap<String, Document> wordsDocuments = parseDocument(data.get("body"), data.get("url"));
 
@@ -231,7 +228,7 @@ public class Indexer {
             if (wordExistsInDB) {
 
                 // update the index
-                ArrayList<Document> foundWords
+                HashMap<String, Document> foundWords
                         = DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
                 if (foundWords.size() > 1) {
@@ -239,6 +236,7 @@ public class Indexer {
                 }
                 Document foundWord = foundWords.get(0);
 
+                @SuppressWarnings("unchecked")
                 ArrayList<Document> urls = foundWord.get("urls", ArrayList.class);
 
                 urls.add(
@@ -248,7 +246,7 @@ public class Indexer {
                 Bson updatedParts = Updates.combine(Updates.set("urls", urls));
 
                 // update words as they are seen in the loop
-                DBconn.updateDocumentInCollection(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
+                DBconn.replaceDocumentByFilter(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
             } else {
                 // first time to insert the word in the index

@@ -10,7 +10,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.conversions.Bson;
 
+import javax.print.Doc;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class DBConnection {
@@ -60,20 +62,16 @@ class DBConnection {
 
     }
 
-    ArrayList<Document> getDocumentsByFilter(Bson filter, String collection) {
+    HashMap<String, Document> getDocumentsByFilter(Bson filter, String collection) {
         synchronized (database) {
             MongoCollection<Document> mongoCollection = database.getCollection(collection);
 
-            ArrayList<Document> documentsFetched = new ArrayList<>();
+            HashMap<String, Document> documentsFetched = new HashMap<>();
 
-            Block<Document> accumelateDocuments = new Block<Document>() {
-                @Override
-                public void apply(final Document document) {
-                    documentsFetched.add(document);
-                }
-            };
+            Block<Document> accumelateDocuments = document -> documentsFetched.put(document.getString("url"), document);
 
             mongoCollection.find(filter).forEach(accumelateDocuments);
+
 
             return documentsFetched;
         }
@@ -95,12 +93,11 @@ class DBConnection {
     }
 
 
-    void updateDocumentInCollection(Bson obj, Bson filter, String collection) {
+    void replaceDocumentByFilter(Bson updated, Bson filter, String collection) {
         synchronized (database) {
             try {
-
-                MongoCollection mongoCollection = this.database.getCollection(collection);
-                UpdateResult res = mongoCollection.updateOne(filter, obj);
+                MongoCollection<Document> mongoCollection = this.database.getCollection(collection);
+                UpdateResult res = mongoCollection.updateOne(filter, updated);
                 res.wasAcknowledged(); // for debugging purposes
             } catch (Exception e) {
 

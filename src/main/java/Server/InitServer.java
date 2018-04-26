@@ -1,7 +1,9 @@
 package Server;
 
+import Classes.Searcher;
 import org.bson.Document;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static spark.Spark.*;
 
@@ -23,17 +25,11 @@ public class InitServer {
 
             responseObject.append("query", query);
 
-            ArrayList<String> data= new ArrayList<>();
+            String[] results = (new Searcher()).getSimilarQueries(query.split(" "));
 
-            data.add("ahmed");
-            data.add("hussein");
-            data.add("fekry");
-            data.add("ali");
-            data.add("mohammed");
+            //ArrayList<String> data= new ArrayList<>();
 
-            responseObject.append("data", data);
-
-            res.header("Content-Length", Integer.toString(responseObject.toJson().getBytes().length));
+            responseObject.append("data", Arrays.asList(results));
 
             return responseObject.toJson();
         });
