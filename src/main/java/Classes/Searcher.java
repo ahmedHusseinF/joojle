@@ -19,7 +19,7 @@ public class Searcher  {
         this.dbConnection = DBConnection.getInstance();
     }
 
-    public void getSimilarQueries(String[] q){
+    public String[] getSimilarQueries(String[] q){
         Bson filters = Filters.eq("");
 
         for (String word: q) {
@@ -28,7 +28,8 @@ public class Searcher  {
 
         HashMap<String, Document> result = dbConnection.getDocumentsByFilter(filters, DBConnection.INDEXED_WORDs);
 
-        //return ((String[]) result.entrySet());
+
+        return ((String[]) result.keySet().toArray());
     }
 
 }

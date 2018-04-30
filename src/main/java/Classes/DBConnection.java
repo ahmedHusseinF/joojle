@@ -45,6 +45,9 @@ class DBConnection {
         }
     }
 
+    long getCollectionSize(String collection){
+        return database.getCollection(collection).count();
+    }
 
     static DBConnection getInstance() {
         if (instance == null) {

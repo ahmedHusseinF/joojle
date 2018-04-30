@@ -220,6 +220,7 @@ public class Crawler extends Thread {
                         .append("url", normalizedUrl)
                         .append("outLinks", links.size())
                         .append("inLinks", 0)
+                        .append("rank", 1)
                         .append("body", bodyContent)
                         .append("indexed", false)
                         .append("description", description != null ? description.attr("content") : "")

@@ -110,7 +110,6 @@ public class Indexer {
         wordsList.replaceAll(uoRef);
 
         //Convert the parsed text document into array of strings
-        //String[] words = Arrays.copyOf(wordsList, wordsList.size(), String[].class);//(String[]) wordsList.toArray();
         String[] words = new String[wordsList.size()];
         for (int i = 0; i < wordsList.size(); i++) {
             words[i] = wordsList.get(i);
@@ -161,6 +160,8 @@ public class Indexer {
                             .append("stem",StemmedWord)
                             .append("url", url)
                             .append("occurrences", occurences.get(word))
+                            .append("wordRank", 1)
+                            .append("allWordsCount", words.length)
                             .append("count", occurences.get(word).size())
             );
 
@@ -169,16 +170,17 @@ public class Indexer {
         return wordsDocuments;
     }
 
-    private HashMap<String, String> getLatestUrlData() {
+    private HashMap<String, Object> getLatestUrlData() {
         Document d = DBconn.getLatestEntry(DBConnection.FETCHED_URLs, true);
 
         if (d == null) {
             return null;
         }
 
-        HashMap<String, String> h = new HashMap<>();
-        h.put("url", d.get("url", String.class));
-        h.put("body", d.get("body", String.class));
+        HashMap<String, Object> h = new HashMap<>();
+        h.put("url", d.getString("url"));
+        h.put("body", d.getString("body"));
+        h.put("rank", d.getDouble("rank"));
 
         return h;
     }
@@ -187,7 +189,7 @@ public class Indexer {
         while (true) {
             try {
 
-                HashMap<String, String> data = this.getLatestUrlData();
+                HashMap<String, Object> data = this.getLatestUrlData();
 
                 if (data == null) {
                     System.out.println("Fetched Urls Collection is Empty");
@@ -198,7 +200,9 @@ public class Indexer {
                 Bson updateFetcehedDocument = Updates.combine(Updates.set("indexed", true), Updates.unset("body"));
                 DBconn.replaceDocumentByFilter(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
 
-                HashMap<String, Document> wordsDocuments = parseDocument(data.get("body"), data.get("url"));
+                HashMap<String, Document> wordsDocuments = parseDocument((String) data.get("body"), (String) data.get("url"));
+
+                // TODO: Function to get a word count in all documents
 
                 saveWordsInDB(wordsDocuments);
 
