@@ -45,8 +45,11 @@ public class Ranker {
 
     }
 
+<<<<<<< HEAD
     private void tfidf()
     {
         
     }
+=======
+>>>>>>> ef94966eade5eab5146dfd553716e39948878549
 }
