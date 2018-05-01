@@ -25,6 +25,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
     </content>
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.mongodb:mongodb-driver:3.6.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.jsoup:jsoup:1.11.2" level="project" />
