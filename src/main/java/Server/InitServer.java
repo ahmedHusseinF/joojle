@@ -8,6 +8,9 @@ import java.util.Arrays;
 import static spark.Spark.*;
 
 public class InitServer {
+
+    private Searcher searcher;
+
     public static void main(String[] args) {
 
         new InitServer();
@@ -15,6 +18,8 @@ public class InitServer {
     }
 
     private InitServer(){
+
+        searcher = new Searcher();
         initRoutes();
     }
 
@@ -27,13 +32,12 @@ public class InitServer {
 
             String[] results = (new Searcher()).getSimilarQueries(query.split(" "));
 
-            //ArrayList<String> data= new ArrayList<>();
+            ArrayList<String> data= new ArrayList<>();
 
             responseObject.append("data", Arrays.asList(results));
 
             return responseObject.toJson();
         });
-
 
 
         get("/s/:query", (req, res) -> {
