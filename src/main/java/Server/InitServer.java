@@ -2,6 +2,8 @@ package Server;
 
 import Classes.Searcher;
 import org.bson.Document;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static spark.Spark.*;
@@ -29,7 +31,8 @@ public class InitServer {
 
             responseObject.append("query", query);
 
-            String[] results = (new Searcher()).getSimilarQueries(query.split(" "));
+            String[] results = searcher.getSimilarQueries(query.split(" "));
+
 
             responseObject.append("data", Arrays.asList(results));
 

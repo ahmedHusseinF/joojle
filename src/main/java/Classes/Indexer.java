@@ -204,6 +204,7 @@ public class Indexer {
 
                 HashMap<String, Document> wordsDocuments = parseDocument((String) data.get("body"), (String) data.get("url"));
 
+
                 saveWordsInDB(wordsDocuments);
 
                 System.out.println("Processed this link: " + data.get("url"));
@@ -240,6 +241,7 @@ public class Indexer {
                 }
 
                 Document foundWord = ((Document) foundWords.values().toArray()[0]);
+
 
                 @SuppressWarnings("unchecked")
                 ArrayList<Document> urls = foundWord.get("urls", ArrayList.class);
