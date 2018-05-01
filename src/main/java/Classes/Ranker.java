@@ -2,6 +2,7 @@ package Classes;
 
 import org.bson.Document;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,6 +22,7 @@ public class Ranker {
         {
             this.pageRanker();
         }
+        TFIDF();
     }
     
     private void pageRanker() {
@@ -45,11 +47,43 @@ public class Ranker {
 
     }
 
-<<<<<<< HEAD
-    private void tfidf()
+
+    private void TFIDF()
     {
-        
+        HashMap<String, Document> arr = db.getDocumentsByFilter(new Document(), DBConnection.INDEXED_WORDs);
+
+        long NumberOfPages= db.getCollectionSize(DBConnection.FETCHED_URLs);
+        for(HashMap.Entry<String, Document> el : arr.entrySet()){
+            String Word=el.getKey();
+            int TotalWordCount=0;
+
+
+            ArrayList<Document> Urls= el.getValue().get("urls", ArrayList.class);
+
+            for(int i=0;i<Urls.size();i++)
+            TotalWordCount+=(int)(Urls.get(i).getInteger("count"));
+            double idf=Math.log(TotalWordCount/NumberOfPages);
+            double  tf=0;
+
+            for(int i=0;i<Urls.size();i++) {
+
+                //tb mana bardo hena 3ayzhom
+                //el word count w total number of word fil page
+
+                @SuppressWarnings("unchecked")
+                int WordOccurence = (int)(Urls.get(i).getInteger("count"));
+                @SuppressWarnings("unchecked")
+                int WordsInDocument = (int)(Urls.get(i).getInteger("allWordsCount"));
+
+                tf=WordOccurence/WordsInDocument;
+
+                double WordRank=tf+idf;
+
+              Urls.get(i).put("Rank",WordRank);
+
+            }
+
+        }
     }
-=======
->>>>>>> ef94966eade5eab5146dfd553716e39948878549
+
 }
