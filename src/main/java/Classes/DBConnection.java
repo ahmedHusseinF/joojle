@@ -1,30 +1,27 @@
 package Classes;
 
 import com.mongodb.Block;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.result.UpdateResult;
-import org.bson.Document;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.UpdateResult;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import javax.print.Doc;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 class DBConnection {
 
-    private static DBConnection instance = null;
-
-    private final MongoDatabase database;
-
-    private static final String DB_NAME = "joojle";
     static final String SEED_LIST = "SeedList";
     static final String FETCHED_URLs = "FetchedURLs";
     static final String INDEXED_WORDs = "IndexedWords";
+    static final String SUGGESTIONS = "Suggestions";
+    private static final String DB_NAME = "joojle";
+    private static DBConnection instance = null;
+    private final MongoDatabase database;
 
 
     private DBConnection() {
@@ -33,6 +30,14 @@ class DBConnection {
         // old database mongodb://admin:EDVeunnibidriz2@ds157528.mlab.com:57528/joojle // instantiate with new MongoClientURI
         MongoClient client = new MongoClient("localhost", 27017);
         database = client.getDatabase(DB_NAME);
+    }
+
+    static DBConnection getInstance() {
+        if (instance == null) {
+            instance = new DBConnection();
+        }
+
+        return instance;
     }
 
     Document getLatestEntry(String collection, boolean... indexer) {
@@ -45,16 +50,8 @@ class DBConnection {
         }
     }
 
-    long getCollectionSize(String collection){
+    long getCollectionSize(String collection) {
         return database.getCollection(collection).count();
-    }
-
-    static DBConnection getInstance() {
-        if (instance == null) {
-            instance = new DBConnection();
-        }
-
-        return instance;
     }
 
     boolean isThisObjectExist(Bson filter, String collection) {
@@ -65,16 +62,20 @@ class DBConnection {
 
     }
 
-    HashMap<String, Document> getDocumentsByFilter(Bson filter, String collection) {
+    HashMap<String, Document> getDocumentsByFilter(Bson filter, String collection, boolean isWord) {
         synchronized (database) {
             MongoCollection<Document> mongoCollection = database.getCollection(collection);
 
             HashMap<String, Document> documentsFetched = new HashMap<>();
 
-            Block<Document> accumelateDocuments = document -> documentsFetched.put(document.getString("url"), document);
+            Block<Document> accumelateDocuments = document -> {
+                if(isWord)
+                    documentsFetched.put(document.getString("word"), document);
+                else
+                    documentsFetched.put(document.getString("url"), document);
+            };
 
             mongoCollection.find(filter).forEach(accumelateDocuments);
-
 
             return documentsFetched;
         }
@@ -96,11 +97,11 @@ class DBConnection {
     }
 
 
-    void replaceDocumentByFilter(Bson updated, Bson filter, String collection) {
+    void updateDocumentByFilter(Bson updated, Bson filter, String collection) {
         synchronized (database) {
             try {
                 MongoCollection<Document> mongoCollection = this.database.getCollection(collection);
-                UpdateResult res = mongoCollection.updateOne(filter, updated);
+                UpdateResult res = mongoCollection.updateOne(filter, updated, new UpdateOptions().upsert(true));
                 res.wasAcknowledged(); // for debugging purposes
             } catch (Exception e) {
 
@@ -108,6 +109,13 @@ class DBConnection {
 
             }
 
+        }
+    }
+
+    void replaceDocumentByFilter(Bson filter, Document replaceDoc, String collection) {
+        synchronized (database) {
+            MongoCollection<Document> mongoCollection = database.getCollection(collection);
+            UpdateResult res = mongoCollection.replaceOne(filter, replaceDoc);
         }
     }
 

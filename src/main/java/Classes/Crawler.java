@@ -10,11 +10,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import crawlercommons.robots.BaseRobotRules;
 import crawlercommons.robots.SimpleRobotRules;
 import crawlercommons.robots.SimpleRobotRulesParser;
+import org.bson.BsonDouble;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jsoup.Jsoup;
@@ -178,22 +180,24 @@ public class Crawler extends Thread {
             if (eachUrl.isEmpty())
                 continue;
 
-            String newNormalizedUrl = new URI(eachUrl).normalize().toString();
+            String newNormalizedUrl = new URI(eachUrl).normalize().toString().split("#")[0].split("\\?")[0];
 
-            Bson equalNormalizedUrl = Filters.eq("url", newNormalizedUrl);
+            Bson bsonNormalizedUrl = Filters.eq("url", newNormalizedUrl);
 
-            if (DBConn.isThisObjectExist(equalNormalizedUrl, DBConnection.SEED_LIST))
+            if (DBConn.isThisObjectExist(bsonNormalizedUrl, DBConnection.SEED_LIST))
                 continue;
 
-            if (DBConn.isThisObjectExist(equalNormalizedUrl, DBConnection.FETCHED_URLs)){
+            if (DBConn.isThisObjectExist(bsonNormalizedUrl, DBConnection.FETCHED_URLs)){
 
-                HashMap<String, Document> fetchedUrl = DBConn.getDocumentsByFilter(equalNormalizedUrl, DBConnection.FETCHED_URLs);
+                HashMap<String, Document> fetchedUrl = DBConn.getDocumentsByFilter(bsonNormalizedUrl, DBConnection.FETCHED_URLs, false);
 
-                int currentUrlInLinks = fetchedUrl.entrySet().iterator().next().getValue().get("inLinks", Integer.class);
+                @SuppressWarnings("unchecked")
+                ArrayList<String> currentUrlInLinks = (ArrayList<String>) fetchedUrl.entrySet().iterator().next().getValue().get("inLinks");
 
-                Bson updatedPortion = Updates.set("inLinks", ++currentUrlInLinks);
+                currentUrlInLinks.add(normalizedUrl);
+                Bson updatedPortion = Updates.set("inLinks", currentUrlInLinks);
 
-                DBConn.replaceDocumentByFilter(updatedPortion, equalNormalizedUrl, DBConnection.FETCHED_URLs);
+                DBConn.updateDocumentByFilter(updatedPortion, bsonNormalizedUrl, DBConnection.FETCHED_URLs);
 
                 continue;
             }
@@ -203,7 +207,6 @@ public class Crawler extends Thread {
 
             if (!protocol.equals("http") && !protocol.equals("https"))
                 continue;
-
 
 
             linksDocuments.add(new Document().append("url", newNormalizedUrl));
@@ -218,8 +221,8 @@ public class Crawler extends Thread {
                 new Document()
                         .append("url", normalizedUrl)
                         .append("outLinks", links.size())
-                        .append("inLinks", 0)
-                        .append("rank", 1)
+                        .append("inLinks", new BasicDBList())
+                        .append("rank", new BsonDouble(1.00))
                         .append("body", bodyContent)
                         .append("indexed", false)
                         .append("description", description != null ? description.attr("content") : "")
@@ -243,6 +246,9 @@ public class Crawler extends Thread {
 
             String url = this.getLatestSeed();
 
+            if(url == null)
+                return;
+
             String normalizedUrl = new URI(url).normalize().toString();
 
             boolean isAllowed = this.robotsSafe(normalizedUrl);
@@ -252,7 +258,6 @@ public class Crawler extends Thread {
 
                 if (res == null || res.isEmpty())
                     throw new Exception("Empty page Document at url " + url);
-
 
                 parseDocument(res, normalizedUrl);
 

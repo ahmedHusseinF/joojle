@@ -1,17 +1,17 @@
 package Classes;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import org.bson.BsonDouble;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jsoup.Jsoup;
 
-import java.util.*;
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class Indexer {
@@ -20,16 +20,23 @@ public class Indexer {
     private DBConnection DBconn;
     private String stemmers[];
 
+    private Indexer() {
+        stopWords = getStopWords();
+        stemmers = getStemmers();
+        DBconn = DBConnection.getInstance();
+    }
+
     public static void main(String arg[]) {
         Indexer indexer = new Indexer();
 
         indexer.run();
     }
 
-    private Indexer() {
-        stopWords = getStopWords();
-        stemmers = getStemmers();
-        DBconn = DBConnection.getInstance();
+    private static String stem(String string, String suffix) {
+        if (string.endsWith(suffix)) {
+            string = string.substring(0, string.length() - suffix.length());
+        }
+        return string;
     }
 
     private String[] getStopWords() {
@@ -80,13 +87,6 @@ public class Indexer {
         return lines.toArray(new String[0]);
     }
 
-    private static String stem(String string, String suffix) {
-        if (string.endsWith(suffix)) {
-            string = string.substring(0, string.length() - suffix.length());
-        }
-        return string;
-    }
-
     private HashMap<String, Document> parseDocument(String body, String url) {
 
         org.jsoup.nodes.Document doc = Jsoup.parse(body);
@@ -105,7 +105,7 @@ public class Indexer {
         // remove strings of only numbers and empty strings
         wordsList.removeIf(word -> (word.matches("\\d+") || word.isEmpty()));
 
-        //remove special charcters from words
+        //remove special characters from words
         UnaryOperator<String> uoRef = (word) -> word.replaceAll("[^\\w]", "");
         wordsList.replaceAll(uoRef);
 
@@ -145,22 +145,17 @@ public class Indexer {
                 continue; // i hate empty words
             }
 
-            //Stemming 
-            String StemmedWord = word;
-            //The first loop is to check if there are two suffixes like (ings)
-            for (int j = 0; j < 2; j++) {
-                for (String stemmer : stemmers) {
-                    StemmedWord = stem(StemmedWord, stemmer);
-                }
+            if (word.matches("\\d+")) {
+                continue; // no numbers only words
             }
+
 
             wordsDocuments.put(
                     word,
                     new Document()
-                            .append("stem",StemmedWord)
                             .append("url", url)
                             .append("occurrences", occurences.get(word))
-                            .append("wordRank", 1)
+                            .append("wordRank", new BsonDouble(1))
                             .append("allWordsCount", words.length)
                             .append("count", occurences.get(word).size())
             );
@@ -200,7 +195,7 @@ public class Indexer {
 
                 // update the fetched urls to be indexed and reduce its HUGE size by deleting body's html and setting indexd to be true
                 Bson updateFetcehedDocument = Updates.combine(Updates.set("indexed", true), Updates.unset("body"));
-                DBconn.replaceDocumentByFilter(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
+                DBconn.updateDocumentByFilter(updateFetcehedDocument, Filters.eq("url", data.get("url")), DBConnection.FETCHED_URLs);
 
                 HashMap<String, Document> wordsDocuments = parseDocument((String) data.get("body"), (String) data.get("url"));
 
@@ -234,7 +229,7 @@ public class Indexer {
 
                 // update the index
                 HashMap<String, Document> foundWords
-                        = DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
+                        = DBconn.getDocumentsByFilter(Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs, true);
 
                 if (foundWords.size() > 1) {
                     throw new Exception("Word: " + wordDocument.getKey() + " have more than 1 entry in DB"); // how did that happen ?
@@ -253,15 +248,17 @@ public class Indexer {
                 Bson updatedParts = Updates.combine(Updates.set("urls", urls));
 
                 // update words as they are seen in the loop
-                DBconn.replaceDocumentByFilter(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
+                DBconn.updateDocumentByFilter(updatedParts, Filters.eq("word", wordDocument.getKey()), DBConnection.INDEXED_WORDs);
 
             } else {
                 // first time to insert the word in the index
-                ourWordDocument.append(
-                        "urls", Collections.singletonList(
-                                wordDocument.getValue()
+                ourWordDocument
+                        .append(
+                                "urls", Collections.singletonList(
+                                        wordDocument.getValue()
+                                )
                         )
-                );
+                        .append("stem", stem(wordDocument.getKey()));
 
                 toBeInserted.add(ourWordDocument);
             }
@@ -272,6 +269,19 @@ public class Indexer {
             DBconn.insertManyIntoCollection(toBeInserted, DBConnection.INDEXED_WORDs);
         }
 
+
     }
 
+    private String stem(String toStem) {
+        //Stemming
+        String StemmedWord = toStem;
+        //The first loop is to check if there are two suffixes like (ings)
+        for (int j = 0; j < 2; j++) {
+            for (String stemmer : stemmers) {
+                StemmedWord = stem(StemmedWord, stemmer);
+            }
+        }
+
+        return StemmedWord;
+    }
 }
